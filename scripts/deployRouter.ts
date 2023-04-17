@@ -20,13 +20,13 @@ async function main() {
   WTRM = WTRM.toLowerCase();
   console.log(WTRM);
   // We get the contract to deploy
-  const DollarswapRouter02 = await ethers.getContractFactory("DollarswapRouter02");
-  const dollarswapRouter02 = await DollarswapRouter02.deploy();
-  // const dollarswapRouter02 = await DollarswapRouter02.deploy(factory, WTRM);
+  const MorodexRouter02 = await ethers.getContractFactory("MorodexRouter02");
+  const morodexRouter02 = await MorodexRouter02.deploy();
+  // const morodexRouter02 = await MorodexRouter02.deploy(factory, WTRM);
 
-  await dollarswapRouter02.deployed();
+  await morodexRouter02.deployed();
 
-  console.log("DollarswapRouter02 deployed to:", dollarswapRouter02.address);
+  console.log("MorodexRouter02 deployed to:", morodexRouter02.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

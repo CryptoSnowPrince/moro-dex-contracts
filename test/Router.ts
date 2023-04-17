@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-import routerABI from "../artifacts/contracts/DollarswapFactory.sol/DollarswapFactory.json"
-import pairABI from "../artifacts/contracts/DollarswapPair.sol/DollarswapPair.json"
+import routerABI from "../artifacts/contracts/MorodexFactory.sol/MorodexFactory.json"
+import pairABI from "../artifacts/contracts/MorodexPair.sol/MorodexPair.json"
 
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
 import { Contract } from "ethers";
