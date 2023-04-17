@@ -1,1 +1,10 @@
 # moro-dex-smart-contract
+
+## bsc testnet
+
+```text
+Factory: 0x2A778865AFce4A560b9707fFC7e5FAc98BCECE2b
+pairCodeHash: 0x47a05262846b33e2192d0755ae5baec698ebf2274861043f053afe7886d7a2d3
+WBNB: 0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd
+Router02: 0xB17EA0c9b663345D332Fd43145F962FC0b6d72c3
+```
