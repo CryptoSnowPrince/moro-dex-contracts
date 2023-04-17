@@ -30,52 +30,43 @@ const config: HardhatUserConfig = {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 2000
-          }
-        }
+            runs: 2000,
+          },
+        },
       },
       {
         version: "0.8.0",
         settings: {
           optimizer: {
             enabled: true,
-            runs: 2000
-          }
-        }
+            runs: 2000,
+          },
+        },
       },
       {
         version: "0.8.6",
         settings: {
           optimizer: {
             enabled: true,
-            runs: 2000
-          }
-        }
+            runs: 2000,
+          },
+        },
       },
       {
         version: "0.8.7",
         settings: {
           optimizer: {
             enabled: true,
-            runs: 200
-          }
-        }
+            runs: 200,
+          },
+        },
       },
-      {
-        version: "0.8.12",
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 200
-          }
-        }
-      },
-    ]
+    ],
   },
   defaultNetwork: "hardhat",
   networks: {
     localhost: {
-      url: "http://127.0.0.1:8545"
+      url: "http://127.0.0.1:8545",
     },
     hardhat: {
       accounts: {
@@ -192,8 +183,8 @@ const config: HardhatUserConfig = {
       sokol: "api-key",
       aurora: "api-key",
       auroraTestnet: "api-key",
-    }
-  }
+    },
+  },
 };
 
 export default config;
