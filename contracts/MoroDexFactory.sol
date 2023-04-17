@@ -2,10 +2,10 @@
 
 pragma solidity =0.6.12;
 
-import './interfaces/IDollarswapFactory.sol';
-import './DollarswapPair.sol';
+import './interfaces/IMoroDexFactory.sol';
+import './MoroDexPair.sol';
 
-contract DollarswapFactory is IDollarswapFactory {
+contract MoroDexFactory is IMoroDexFactory {
 
     address public override feeTo;
     address public override feeToSetter;
@@ -25,20 +25,20 @@ contract DollarswapFactory is IDollarswapFactory {
     }
 
     function pairCodeHash() external pure returns (bytes32) {
-        return keccak256(type(DollarswapPair).creationCode);
+        return keccak256(type(MoroDexPair).creationCode);
     }
 
     function createPair(address tokenA, address tokenB) external override returns (address pair) {
         require(tokenA != tokenB, 'UniswapV2: IDENTICAL_ADDRESSES');
         (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
-        require(token0 != address(0), 'Dollarswap: ZERO_ADDRESS');
-        require(getPair[token0][token1] == address(0), 'Dollarswap: PAIR_EXISTS'); // single check is sufficient
-        bytes memory bytecode = type(DollarswapPair).creationCode;
+        require(token0 != address(0), 'MoroDex: ZERO_ADDRESS');
+        require(getPair[token0][token1] == address(0), 'MoroDex: PAIR_EXISTS'); // single check is sufficient
+        bytes memory bytecode = type(MoroDexPair).creationCode;
         bytes32 salt = keccak256(abi.encodePacked(token0, token1));
         assembly {
             pair := create2(0, add(bytecode, 32), mload(bytecode), salt)
         }
-        DollarswapPair(pair).initialize(token0, token1);
+        MoroDexPair(pair).initialize(token0, token1);
         getPair[token0][token1] = pair;
         getPair[token1][token0] = pair; // populate mapping in the reverse direction
         allPairs.push(pair);
@@ -46,17 +46,17 @@ contract DollarswapFactory is IDollarswapFactory {
     }
 
     function setFeeTo(address _feeTo) external override {
-        require(msg.sender == feeToSetter, 'Dollarswap: FORBIDDEN');
+        require(msg.sender == feeToSetter, 'MoroDex: FORBIDDEN');
         feeTo = _feeTo;
     }
 
     function setMigrator(address _migrator) external override {
-        require(msg.sender == feeToSetter, 'Dollarswap: FORBIDDEN');
+        require(msg.sender == feeToSetter, 'MoroDex: FORBIDDEN');
         migrator = _migrator;
     }
 
     function setFeeToSetter(address _feeToSetter) external override {
-        require(msg.sender == feeToSetter, 'Dollarswap: FORBIDDEN');
+        require(msg.sender == feeToSetter, 'MoroDex: FORBIDDEN');
         feeToSetter = _feeToSetter;
     }
 }

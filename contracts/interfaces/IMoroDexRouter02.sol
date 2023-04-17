@@ -2,9 +2,9 @@
 
 pragma solidity >=0.6.2;
 
-import './IDollarswapRouter01.sol';
+import './IMoroDexRouter01.sol';
 
-interface IDollarswapRouter02 is IDollarswapRouter01 {
+interface IMoroDexRouter02 is IMoroDexRouter01 {
     function removeLiquidityETHSupportingFeeOnTransferTokens(
         address token,
         uint liquidity,
