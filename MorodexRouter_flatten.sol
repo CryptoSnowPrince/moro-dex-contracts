@@ -1142,7 +1142,6 @@ library SafeCast {
 
 // File contracts/core/libraries/TransferHelper.sol
 
-// SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity =0.8.17;
 
 /**
@@ -1188,7 +1187,6 @@ library TransferHelper {
 
 // File @openzeppelin/contracts/utils/math/Math.sol
 
-// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.8.0) (utils/math/Math.sol)
 
 pragma solidity ^0.8.0;
@@ -1537,7 +1535,6 @@ library Math {
 
 // File @openzeppelin/contracts/token/ERC20/IERC20.sol
 
-// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.6.0) (token/ERC20/IERC20.sol)
 
 pragma solidity ^0.8.0;
@@ -1623,7 +1620,6 @@ interface IERC20 {
 
 // File @openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol
 
-// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (token/ERC20/extensions/draft-IERC20Permit.sol)
 
 pragma solidity ^0.8.0;
@@ -1687,7 +1683,6 @@ interface IERC20Permit {
 
 // File contracts/core/interfaces/IMorodexPair.sol
 
-// SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.17;
 
 // interfaces
@@ -1869,7 +1864,6 @@ interface IMorodexPair is IERC20, IERC20Permit {
 
 // File contracts/core/libraries/MorodexLibrary.sol
 
-// SPDX-License-Identifier: BUSL-1.1
 pragma solidity =0.8.17;
 
 // libraries
@@ -2391,7 +2385,6 @@ library MorodexLibrary {
 
 // File contracts/core/interfaces/IMorodexFactory.sol
 
-// SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity >=0.8.17;
 
 interface IMorodexFactory {
@@ -2456,7 +2449,6 @@ interface IMorodexFactory {
 
 // File contracts/periphery/libraries/PoolAddress.sol
 
-// SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity =0.8.17;
 
 // libraries
@@ -2573,7 +2565,7 @@ library PoolAddress {
                             hex"ff",
                             _factory,
                             keccak256(abi.encodePacked(token0, token1)),
-                            hex"b477a06204165d50e6d795c7c216306290eff5d6015f8b65bb46002a8775b548" // init code hash
+                            hex"81a31393f08e18ee806979471eab694dee785099dcad4cf139ae43f9e8114f14" // init code hash
                         )
                     )
                 )
@@ -2600,7 +2592,6 @@ library PoolAddress {
 
 // File contracts/periphery/libraries/BytesLib.sol
 
-// SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity ^0.8.17;
 
 /**
@@ -2702,7 +2693,6 @@ library BytesLib {
 
 // File contracts/periphery/libraries/Path.sol
 
-// SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity ^0.8.17;
 
 // libraries
@@ -2781,7 +2771,6 @@ library Path {
 
 // File contracts/core/interfaces/IMorodexSwapCallback.sol
 
-// SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity >=0.8.17;
 
 interface IMorodexSwapCallback {
@@ -2797,7 +2786,6 @@ interface IMorodexSwapCallback {
 
 // File contracts/core/interfaces/IMorodexMintCallback.sol
 
-// SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity >=0.8.17;
 
 interface IMorodexMintCallback {
@@ -2827,7 +2815,6 @@ interface IMorodexMintCallback {
 
 // File contracts/periphery/interfaces/IMorodexRouter.sol
 
-// SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity >=0.8.17;
 
 // interfaces
@@ -3198,7 +3185,6 @@ interface IMorodexRouter is IMorodexSwapCallback, IMorodexMintCallback {
 
 // File contracts/periphery/interfaces/IWETH.sol
 
-// SPDX-License-Identifier: GPL-3.0
 
 // Copyright (C) 2015, 2016, 2017 Dapphub
 
@@ -3228,7 +3214,6 @@ interface IWETH {
 
 // File contracts/periphery/MorodexRouter.sol
 
-// SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity =0.8.17;
 
 // libraries

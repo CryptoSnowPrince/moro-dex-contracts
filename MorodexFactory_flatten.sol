@@ -66,7 +66,6 @@ interface IERC20Permit {
 
 // File @openzeppelin/contracts/token/ERC20/IERC20.sol
 
-// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.6.0) (token/ERC20/IERC20.sol)
 
 pragma solidity ^0.8.0;
@@ -152,7 +151,6 @@ interface IERC20 {
 
 // File @openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol
 
-// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (token/ERC20/extensions/IERC20Metadata.sol)
 
 pragma solidity ^0.8.0;
@@ -182,7 +180,6 @@ interface IERC20Metadata is IERC20 {
 
 // File @openzeppelin/contracts/utils/Context.sol
 
-// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (utils/Context.sol)
 
 pragma solidity ^0.8.0;
@@ -210,7 +207,6 @@ abstract contract Context {
 
 // File @openzeppelin/contracts/token/ERC20/ERC20.sol
 
-// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.8.0) (token/ERC20/ERC20.sol)
 
 pragma solidity ^0.8.0;
@@ -601,7 +597,6 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 
 // File @openzeppelin/contracts/utils/math/Math.sol
 
-// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.8.0) (utils/math/Math.sol)
 
 pragma solidity ^0.8.0;
@@ -950,7 +945,6 @@ library Math {
 
 // File @openzeppelin/contracts/utils/Strings.sol
 
-// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.8.0) (utils/Strings.sol)
 
 pragma solidity ^0.8.0;
@@ -1022,7 +1016,6 @@ library Strings {
 
 // File @openzeppelin/contracts/utils/cryptography/ECDSA.sol
 
-// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.8.0) (utils/cryptography/ECDSA.sol)
 
 pragma solidity ^0.8.0;
@@ -1237,7 +1230,6 @@ library ECDSA {
 
 // File @openzeppelin/contracts/utils/cryptography/EIP712.sol
 
-// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.8.0) (utils/cryptography/EIP712.sol)
 
 pragma solidity ^0.8.0;
@@ -1343,7 +1335,6 @@ abstract contract EIP712 {
 
 // File @openzeppelin/contracts/utils/Counters.sol
 
-// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (utils/Counters.sol)
 
 pragma solidity ^0.8.0;
@@ -1390,7 +1381,6 @@ library Counters {
 
 // File @openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol
 
-// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.8.0) (token/ERC20/extensions/draft-ERC20Permit.sol)
 
 pragma solidity ^0.8.0;
@@ -1487,7 +1477,6 @@ abstract contract ERC20Permit is ERC20, IERC20Permit, EIP712 {
 
 // File @openzeppelin/contracts/utils/math/SafeCast.sol
 
-// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.8.0) (utils/math/SafeCast.sol)
 // This file was procedurally generated from scripts/generate/templates/SafeCast.js.
 
@@ -2627,7 +2616,6 @@ library SafeCast {
 
 // File contracts/core/interfaces/IMorodexPair.sol
 
-// SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.17;
 
 // interfaces
@@ -2809,7 +2797,6 @@ interface IMorodexPair is IERC20, IERC20Permit {
 
 // File contracts/core/libraries/MorodexLibrary.sol
 
-// SPDX-License-Identifier: BUSL-1.1
 pragma solidity =0.8.17;
 
 // libraries
@@ -3331,7 +3318,6 @@ library MorodexLibrary {
 
 // File contracts/core/libraries/TransferHelper.sol
 
-// SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity =0.8.17;
 
 /**
@@ -3377,7 +3363,6 @@ library TransferHelper {
 
 // File contracts/core/interfaces/IMorodexFactory.sol
 
-// SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity >=0.8.17;
 
 interface IMorodexFactory {
@@ -3442,7 +3427,6 @@ interface IMorodexFactory {
 
 // File contracts/core/interfaces/IMorodexSwapCallback.sol
 
-// SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity >=0.8.17;
 
 interface IMorodexSwapCallback {
@@ -3458,7 +3442,6 @@ interface IMorodexSwapCallback {
 
 // File contracts/core/interfaces/IMorodexMintCallback.sol
 
-// SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity >=0.8.17;
 
 interface IMorodexMintCallback {
@@ -3488,7 +3471,6 @@ interface IMorodexMintCallback {
 
 // File contracts/core/MorodexPair.sol
 
-// SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity =0.8.17;
 
 // contracts
@@ -3979,7 +3961,6 @@ contract MorodexPair is IMorodexPair, ERC20Permit {
 
 // File contracts/core/MorodexFactory.sol
 
-// SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity =0.8.17;
 
 // contracts

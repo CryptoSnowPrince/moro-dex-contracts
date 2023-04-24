@@ -88,7 +88,6 @@ interface IERC20 {
 
 // File @openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol
 
-// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (token/ERC20/extensions/draft-IERC20Permit.sol)
 
 pragma solidity ^0.8.0;
@@ -152,7 +151,6 @@ interface IERC20Permit {
 
 // File @openzeppelin/contracts/utils/Address.sol
 
-// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.8.0) (utils/Address.sol)
 
 pragma solidity ^0.8.1;
@@ -400,7 +398,6 @@ library Address {
 
 // File @openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 
-// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.8.0) (token/ERC20/utils/SafeERC20.sol)
 
 pragma solidity ^0.8.0;
@@ -518,7 +515,6 @@ library SafeERC20 {
 
 // File @openzeppelin/contracts/utils/math/SafeCast.sol
 
-// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.8.0) (utils/math/SafeCast.sol)
 // This file was procedurally generated from scripts/generate/templates/SafeCast.js.
 
@@ -1658,7 +1654,6 @@ library SafeCast {
 
 // File @openzeppelin/contracts/utils/math/Math.sol
 
-// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.8.0) (utils/math/Math.sol)
 
 pragma solidity ^0.8.0;
@@ -2007,7 +2002,6 @@ library Math {
 
 // File contracts/core/interfaces/IMorodexPair.sol
 
-// SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.17;
 
 // interfaces
@@ -2189,7 +2183,6 @@ interface IMorodexPair is IERC20, IERC20Permit {
 
 // File contracts/core/libraries/MorodexLibrary.sol
 
-// SPDX-License-Identifier: BUSL-1.1
 pragma solidity =0.8.17;
 
 // libraries
@@ -2711,7 +2704,6 @@ library MorodexLibrary {
 
 // File contracts/periphery/libraries/BytesLib.sol
 
-// SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity ^0.8.17;
 
 /**
@@ -2813,7 +2805,6 @@ library BytesLib {
 
 // File contracts/periphery/libraries/Path.sol
 
-// SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity ^0.8.17;
 
 // libraries
@@ -2892,7 +2883,6 @@ library Path {
 
 // File @openzeppelin/contracts/interfaces/IERC20.sol
 
-// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (interfaces/IERC20.sol)
 
 pragma solidity ^0.8.0;
@@ -2900,7 +2890,6 @@ pragma solidity ^0.8.0;
 
 // File contracts/core/interfaces/IMorodexFactory.sol
 
-// SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity >=0.8.17;
 
 interface IMorodexFactory {
@@ -2965,7 +2954,6 @@ interface IMorodexFactory {
 
 // File contracts/core/interfaces/IMorodexSwapCallback.sol
 
-// SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity >=0.8.17;
 
 interface IMorodexSwapCallback {
@@ -2981,7 +2969,6 @@ interface IMorodexSwapCallback {
 
 // File contracts/rewards/interfaces/IAutoSwapper.sol
 
-// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.17;
 
 // interfaces
@@ -3024,7 +3011,6 @@ interface IAutoSwapper is IMorodexSwapCallback {
 
 // File contracts/rewards/AutoSwapper.sol
 
-// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.17;
 
 // libraries

@@ -117,7 +117,7 @@ library PoolAddress {
                             hex"ff",
                             _factory,
                             keccak256(abi.encodePacked(token0, token1)),
-                            hex"b477a06204165d50e6d795c7c216306290eff5d6015f8b65bb46002a8775b548" // init code hash
+                            hex"81a31393f08e18ee806979471eab694dee785099dcad4cf139ae43f9e8114f14" // init code hash
                         )
                     )
                 )
