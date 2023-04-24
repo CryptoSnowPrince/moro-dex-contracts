@@ -5,15 +5,15 @@ pragma solidity =0.8.17;
 import "./PoolHelpers.sol";
 
 // interfaces
-import "../../core/interfaces/ISmardexFactory.sol";
+import "../../core/interfaces/IMorodexFactory.sol";
 
 library PoolAddress {
     /**
      * @notice Deterministically computes the pool address given the factory and PoolKey
-     * @param _factory The SmarDex factory contract address
+     * @param _factory The MoroDex factory contract address
      * @param _tokenA The first token of the pool
      * @param _tokenB The second token of the pool
-     * @return pair_ The contract address of the SmardexPair
+     * @return pair_ The contract address of the MorodexPair
      */
     function pairFor(address _factory, address _tokenA, address _tokenB) internal pure returns (address pair_) {
         (address token0, address token1) = PoolHelpers.sortTokens(_tokenA, _tokenB);
@@ -35,16 +35,16 @@ library PoolAddress {
 
     /**
      * @notice make a call to the factory to determine the pair address. usefull for coverage test
-     * @param _factory The SmarDex factory contract address
+     * @param _factory The MoroDex factory contract address
      * @param _tokenA The first token of the pool
      * @param _tokenB The second token of the pool
-     * @return pair_ The contract address of the SmardexPair
+     * @return pair_ The contract address of the MorodexPair
      */
     function pairForByStorage(
         address _factory,
         address _tokenA,
         address _tokenB
     ) internal view returns (address pair_) {
-        return ISmardexFactory(_factory).getPair(_tokenA, _tokenB);
+        return IMorodexFactory(_factory).getPair(_tokenA, _tokenB);
     }
 }

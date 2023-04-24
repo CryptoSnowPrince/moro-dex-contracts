@@ -8,16 +8,16 @@ import "./libraries/PoolAddress.sol";
 import "./libraries/Path.sol";
 
 // interfaces
-import "../core/interfaces/ISmardexFactory.sol";
-import "../core/interfaces/ISmardexPair.sol";
-import "./interfaces/ISmardexRouter.sol";
+import "../core/interfaces/IMorodexFactory.sol";
+import "../core/interfaces/IMorodexPair.sol";
+import "./interfaces/IMorodexRouter.sol";
 import "./interfaces/IWETH.sol";
 
 /**
- * @title SmardexRouter
- * @notice Router for execution of swaps and liquidity management on SmardexPair
+ * @title MorodexRouter
+ * @notice Router for execution of swaps and liquidity management on MorodexPair
  */
-contract SmardexRouter is ISmardexRouter {
+contract MorodexRouter is IMorodexRouter {
     using Path for bytes;
     using Path for address[];
     using SafeCast for uint256;
@@ -44,7 +44,7 @@ contract SmardexRouter is ISmardexRouter {
     uint256 private amountInCached = DEFAULT_AMOUNT_IN_CACHED;
 
     modifier ensure(uint256 deadline) {
-        require(deadline >= block.timestamp, "SmarDexRouter: EXPIRED");
+        require(deadline >= block.timestamp, "MoroDexRouter: EXPIRED");
         _;
     }
 
@@ -57,15 +57,15 @@ contract SmardexRouter is ISmardexRouter {
         assert(msg.sender == WETH); // only accept ETH via fallback from the WETH contract
     }
 
-    /// @inheritdoc ISmardexSwapCallback
-    function smardexSwapCallback(int256 _amount0Delta, int256 _amount1Delta, bytes calldata _data) external override {
-        require(_amount0Delta > 0 || _amount1Delta > 0, "SmardexRouter: Callback Invalid amount");
+    /// @inheritdoc IMorodexSwapCallback
+    function morodexSwapCallback(int256 _amount0Delta, int256 _amount1Delta, bytes calldata _data) external override {
+        require(_amount0Delta > 0 || _amount1Delta > 0, "MorodexRouter: Callback Invalid amount");
 
         SwapCallbackData memory _decodedData = abi.decode(_data, (SwapCallbackData));
         (address _tokenIn, address _tokenOut) = _decodedData.path.decodeFirstPool();
 
         // ensure that msg.sender is a pair
-        require(msg.sender == PoolAddress.pairFor(factory, _tokenIn, _tokenOut), "SmarDexRouter: INVALID_PAIR");
+        require(msg.sender == PoolAddress.pairFor(factory, _tokenIn, _tokenOut), "MoroDexRouter: INVALID_PAIR");
 
         (bool _isExactInput, uint256 _amountToPay) = _amount0Delta > 0
             ? (_tokenIn < _tokenOut, uint256(_amount0Delta))
@@ -108,17 +108,17 @@ contract SmardexRouter is ISmardexRouter {
         }
     }
 
-    ///@inheritdoc ISmardexMintCallback
-    function smardexMintCallback(MintCallbackData calldata _data) external override {
+    ///@inheritdoc IMorodexMintCallback
+    function morodexMintCallback(MintCallbackData calldata _data) external override {
         // ensure that msg.sender is a pair
-        require(msg.sender == PoolAddress.pairFor(factory, _data.token0, _data.token1), "SmarDexRouter: INVALID_PAIR");
-        require(_data.amount0 > 0 || _data.amount1 > 0, "SmardexRouter: Callback Invalid amount");
+        require(msg.sender == PoolAddress.pairFor(factory, _data.token0, _data.token1), "MoroDexRouter: INVALID_PAIR");
+        require(_data.amount0 > 0 || _data.amount1 > 0, "MorodexRouter: Callback Invalid amount");
 
         pay(_data.token0, _data.payer, msg.sender, _data.amount0);
         pay(_data.token1, _data.payer, msg.sender, _data.amount1);
     }
 
-    /// @inheritdoc ISmardexRouter
+    /// @inheritdoc IMorodexRouter
     function addLiquidity(
         address _tokenA,
         address _tokenB,
@@ -139,7 +139,7 @@ contract SmardexRouter is ISmardexRouter {
         );
         address _pair = PoolAddress.pairFor(factory, _tokenA, _tokenB);
         bool _orderedPair = _tokenA < _tokenB;
-        liquidity_ = ISmardexPair(_pair).mint(
+        liquidity_ = IMorodexPair(_pair).mint(
             _to,
             _orderedPair ? amountA_ : amountB_,
             _orderedPair ? amountB_ : amountA_,
@@ -147,7 +147,7 @@ contract SmardexRouter is ISmardexRouter {
         );
     }
 
-    /// @inheritdoc ISmardexRouter
+    /// @inheritdoc IMorodexRouter
     function addLiquidityETH(
         address _token,
         uint256 _amountTokenDesired,
@@ -175,7 +175,7 @@ contract SmardexRouter is ISmardexRouter {
         address _pair = PoolAddress.pairFor(factory, _token, WETH);
         bool _orderedPair = _token < WETH;
 
-        liquidity_ = ISmardexPair(_pair).mint(
+        liquidity_ = IMorodexPair(_pair).mint(
             _to,
             _orderedPair ? amountToken_ : amountETH_,
             _orderedPair ? amountETH_ : amountToken_,
@@ -188,7 +188,7 @@ contract SmardexRouter is ISmardexRouter {
         }
     }
 
-    /// @inheritdoc ISmardexRouter
+    /// @inheritdoc IMorodexRouter
     function removeLiquidity(
         address _tokenA,
         address _tokenB,
@@ -199,17 +199,17 @@ contract SmardexRouter is ISmardexRouter {
         uint256 _deadline
     ) public virtual override ensure(_deadline) returns (uint256 amountA_, uint256 amountB_) {
         address _pair = PoolAddress.pairFor(factory, _tokenA, _tokenB);
-        ISmardexPair(_pair).transferFrom(msg.sender, _pair, _liquidity); // send liquidity to pair
+        IMorodexPair(_pair).transferFrom(msg.sender, _pair, _liquidity); // send liquidity to pair
 
-        (uint256 _amount0, uint256 _amount1) = ISmardexPair(_pair).burn(_to);
+        (uint256 _amount0, uint256 _amount1) = IMorodexPair(_pair).burn(_to);
         (address _token0, ) = PoolHelpers.sortTokens(_tokenA, _tokenB);
         (amountA_, amountB_) = _tokenA == _token0 ? (_amount0, _amount1) : (_amount1, _amount0);
 
-        require(amountA_ >= _amountAMin, "SmarDexRouter: INSUFFICIENT_A_AMOUNT");
-        require(amountB_ >= _amountBMin, "SmarDexRouter: INSUFFICIENT_B_AMOUNT");
+        require(amountA_ >= _amountAMin, "MoroDexRouter: INSUFFICIENT_A_AMOUNT");
+        require(amountB_ >= _amountBMin, "MoroDexRouter: INSUFFICIENT_B_AMOUNT");
     }
 
-    /// @inheritdoc ISmardexRouter
+    /// @inheritdoc IMorodexRouter
     function removeLiquidityETH(
         address _token,
         uint256 _liquidity,
@@ -232,7 +232,7 @@ contract SmardexRouter is ISmardexRouter {
         TransferHelper.safeTransferETH(_to, amountETH_);
     }
 
-    /// @inheritdoc ISmardexRouter
+    /// @inheritdoc IMorodexRouter
     function removeLiquidityWithPermit(
         address _tokenA,
         address _tokenB,
@@ -248,11 +248,11 @@ contract SmardexRouter is ISmardexRouter {
     ) external virtual override returns (uint256 amountA_, uint256 amountB_) {
         address _pair = PoolAddress.pairFor(factory, _tokenA, _tokenB);
         uint256 _value = _approveMax ? type(uint256).max : _liquidity;
-        ISmardexPair(_pair).permit(msg.sender, address(this), _value, _deadline, _v, _r, _s);
+        IMorodexPair(_pair).permit(msg.sender, address(this), _value, _deadline, _v, _r, _s);
         (amountA_, amountB_) = removeLiquidity(_tokenA, _tokenB, _liquidity, _amountAMin, _amountBMin, _to, _deadline);
     }
 
-    /// @inheritdoc ISmardexRouter
+    /// @inheritdoc IMorodexRouter
     function removeLiquidityETHWithPermit(
         address _token,
         uint256 _liquidity,
@@ -267,7 +267,7 @@ contract SmardexRouter is ISmardexRouter {
     ) external virtual override returns (uint256 amountToken_, uint256 amountETH_) {
         address _pair = PoolAddress.pairFor(factory, _token, WETH);
         uint256 _value = _approveMax ? type(uint256).max : _liquidity;
-        ISmardexPair(_pair).permit(msg.sender, address(this), _value, _deadline, _v, _r, _s);
+        IMorodexPair(_pair).permit(msg.sender, address(this), _value, _deadline, _v, _r, _s);
         (amountToken_, amountETH_) = removeLiquidityETH(
             _token,
             _liquidity,
@@ -278,7 +278,7 @@ contract SmardexRouter is ISmardexRouter {
         );
     }
 
-    /// @inheritdoc ISmardexRouter
+    /// @inheritdoc IMorodexRouter
     function swapExactTokensForTokens(
         uint256 _amountIn,
         uint256 _amountOutMin,
@@ -311,10 +311,10 @@ contract SmardexRouter is ISmardexRouter {
                 break;
             }
         }
-        require(amountOut_ >= _amountOutMin, "SmarDexRouter: INSUFFICIENT_OUTPUT_AMOUNT");
+        require(amountOut_ >= _amountOutMin, "MoroDexRouter: INSUFFICIENT_OUTPUT_AMOUNT");
     }
 
-    /// @inheritdoc ISmardexRouter
+    /// @inheritdoc IMorodexRouter
     function swapTokensForExactTokens(
         uint256 _amountOut,
         uint256 _amountInMax,
@@ -327,13 +327,13 @@ contract SmardexRouter is ISmardexRouter {
         amountIn_ = _swapExactOut(_amountOut, _to, SwapCallbackData({ path: _reversedPath, payer: msg.sender }));
         // amount In is only the right one for one Hop, otherwise we need cached amountIn from callback
         if (_path.length > 2) amountIn_ = amountInCached;
-        require(amountIn_ <= _amountInMax, "SmarDexRouter: EXCESSIVE_INPUT_AMOUNT");
+        require(amountIn_ <= _amountInMax, "MoroDexRouter: EXCESSIVE_INPUT_AMOUNT");
         amountInCached = DEFAULT_AMOUNT_IN_CACHED;
 
         _refundETH(_to);
     }
 
-    /// @inheritdoc ISmardexRouter
+    /// @inheritdoc IMorodexRouter
     function swapTokensForExactETH(
         uint256 _amountOut,
         uint256 _amountInMax,
@@ -341,34 +341,34 @@ contract SmardexRouter is ISmardexRouter {
         address _to,
         uint256 _deadline
     ) external virtual override ensure(_deadline) returns (uint256 amountIn_) {
-        require(_path[_path.length - 1] == WETH, "SmarDexRouter: INVALID_PATH");
+        require(_path[_path.length - 1] == WETH, "MoroDexRouter: INVALID_PATH");
         amountIn_ = swapTokensForExactTokens(_amountOut, _amountInMax, _path, address(this), _deadline);
         _unwrapWETH(_amountOut, _to);
     }
 
-    /// @inheritdoc ISmardexRouter
+    /// @inheritdoc IMorodexRouter
     function swapETHForExactTokens(
         uint256 _amountOut,
         address[] calldata _path,
         address _to,
         uint256 _deadline
     ) external payable virtual override ensure(_deadline) returns (uint256 amountIn_) {
-        require(_path[0] == WETH, "SmarDexRouter: INVALID_PATH");
+        require(_path[0] == WETH, "MoroDexRouter: INVALID_PATH");
         amountIn_ = swapTokensForExactTokens(_amountOut, msg.value, _path, _to, _deadline);
     }
 
-    /// @inheritdoc ISmardexRouter
+    /// @inheritdoc IMorodexRouter
     function swapExactETHForTokens(
         uint256 _amountOutMin,
         address[] calldata _path,
         address _to,
         uint256 _deadline
     ) external payable virtual override ensure(_deadline) returns (uint256 amountOut_) {
-        require(_path[0] == WETH, "SmarDexRouter: INVALID_PATH");
+        require(_path[0] == WETH, "MoroDexRouter: INVALID_PATH");
         amountOut_ = swapExactTokensForTokens(msg.value, _amountOutMin, _path, _to, _deadline);
     }
 
-    /// @inheritdoc ISmardexRouter
+    /// @inheritdoc IMorodexRouter
     function swapExactTokensForETH(
         uint256 _amountIn,
         uint256 _amountOutMin,
@@ -376,7 +376,7 @@ contract SmardexRouter is ISmardexRouter {
         address _to,
         uint256 _deadline
     ) external virtual override ensure(_deadline) returns (uint256 amountOut_) {
-        require(_path[_path.length - 1] == WETH, "SmarDexRouter: INVALID_PATH");
+        require(_path[_path.length - 1] == WETH, "MoroDexRouter: INVALID_PATH");
         amountOut_ = swapExactTokensForTokens(_amountIn, _amountOutMin, _path, address(this), _deadline);
         _unwrapWETH(amountOut_, _to);
     }
@@ -433,7 +433,7 @@ contract SmardexRouter is ISmardexRouter {
         bool _zeroForOne = _tokenIn < _tokenOut;
 
         // do the swap
-        (int256 _amount0, int256 _amount1) = ISmardexPair(PoolAddress.pairFor(factory, _tokenIn, _tokenOut)).swap(
+        (int256 _amount0, int256 _amount1) = IMorodexPair(PoolAddress.pairFor(factory, _tokenIn, _tokenOut)).swap(
             _to,
             _zeroForOne,
             -_amountOut.toInt256(),
@@ -467,8 +467,8 @@ contract SmardexRouter is ISmardexRouter {
         uint256 _amountBMin
     ) internal virtual returns (uint256 amountA_, uint256 amountB_) {
         // create the pair if it doesn't exist yet
-        if (ISmardexFactory(factory).getPair(_tokenA, _tokenB) == address(0)) {
-            ISmardexFactory(factory).createPair(_tokenA, _tokenB);
+        if (IMorodexFactory(factory).getPair(_tokenA, _tokenB) == address(0)) {
+            IMorodexFactory(factory).createPair(_tokenA, _tokenB);
         }
         (uint256 _reserveA, uint256 _reserveB) = PoolHelpers.getReserves(factory, _tokenA, _tokenB);
         if (_reserveA == 0 && _reserveB == 0) {
@@ -476,12 +476,12 @@ contract SmardexRouter is ISmardexRouter {
         } else {
             uint256 _amountBOptimal = PoolHelpers.quote(_amountADesired, _reserveA, _reserveB);
             if (_amountBOptimal <= _amountBDesired) {
-                require(_amountBOptimal >= _amountBMin, "SmarDexRouter: INSUFFICIENT_B_AMOUNT");
+                require(_amountBOptimal >= _amountBMin, "MoroDexRouter: INSUFFICIENT_B_AMOUNT");
                 (amountA_, amountB_) = (_amountADesired, _amountBOptimal);
             } else {
                 uint256 _amountAOptimal = PoolHelpers.quote(_amountBDesired, _reserveB, _reserveA);
                 assert(_amountAOptimal <= _amountADesired);
-                require(_amountAOptimal >= _amountAMin, "SmarDexRouter: INSUFFICIENT_A_AMOUNT");
+                require(_amountAOptimal >= _amountAMin, "MoroDexRouter: INSUFFICIENT_A_AMOUNT");
                 (amountA_, amountB_) = (_amountAOptimal, _amountBDesired);
             }
         }
@@ -506,7 +506,7 @@ contract SmardexRouter is ISmardexRouter {
 
         (address _tokenIn, address _tokenOut) = _data.path.decodeFirstPool();
         bool _zeroForOne = _tokenIn < _tokenOut;
-        (int256 _amount0, int256 _amount1) = ISmardexPair(PoolAddress.pairFor(factory, _tokenIn, _tokenOut)).swap(
+        (int256 _amount0, int256 _amount1) = IMorodexPair(PoolAddress.pairFor(factory, _tokenIn, _tokenOut)).swap(
             _to,
             _zeroForOne,
             _amountIn.toInt256(),
@@ -516,7 +516,7 @@ contract SmardexRouter is ISmardexRouter {
         amountOut_ = (_zeroForOne ? -_amount1 : -_amount0).toUint256();
     }
 
-    /// @inheritdoc ISmardexRouter
+    /// @inheritdoc IMorodexRouter
     function quote(
         uint256 _amountA,
         uint256 _reserveA,
@@ -525,7 +525,7 @@ contract SmardexRouter is ISmardexRouter {
         return PoolHelpers.quote(_amountA, _reserveA, _reserveB);
     }
 
-    /// @inheritdoc ISmardexRouter
+    /// @inheritdoc IMorodexRouter
     function getAmountOut(
         uint256 _amountIn,
         uint256 _reserveIn,
@@ -545,7 +545,7 @@ contract SmardexRouter is ISmardexRouter {
             uint256 newFictiveReserveOut_
         )
     {
-        (amountOut_, newReserveIn_, newReserveOut_, newFictiveReserveIn_, newFictiveReserveOut_) = SmardexLibrary
+        (amountOut_, newReserveIn_, newReserveOut_, newFictiveReserveIn_, newFictiveReserveOut_) = MorodexLibrary
             .getAmountOut(
                 _amountIn,
                 _reserveIn,
@@ -557,7 +557,7 @@ contract SmardexRouter is ISmardexRouter {
             );
     }
 
-    /// @inheritdoc ISmardexRouter
+    /// @inheritdoc IMorodexRouter
     function getAmountIn(
         uint256 _amountOut,
         uint256 _reserveIn,
@@ -577,7 +577,7 @@ contract SmardexRouter is ISmardexRouter {
             uint256 newFictiveReserveOut_
         )
     {
-        (amountIn_, newReserveIn_, newReserveOut_, newFictiveReserveIn_, newFictiveReserveOut_) = SmardexLibrary
+        (amountIn_, newReserveIn_, newReserveOut_, newFictiveReserveIn_, newFictiveReserveOut_) = MorodexLibrary
             .getAmountIn(
                 _amountOut,
                 _reserveIn,

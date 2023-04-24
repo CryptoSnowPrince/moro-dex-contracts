@@ -5,9 +5,9 @@ pragma solidity =0.8.17;
 import "@openzeppelin/contracts/utils/math/Math.sol";
 
 // interfaces
-import "../interfaces/ISmardexPair.sol";
+import "../interfaces/IMorodexPair.sol";
 
-library SmardexLibrary {
+library MorodexLibrary {
     /// @notice amount of fees sent to LP, not in percent but in FEES_BASE
     uint256 public constant FEES_LP = 5;
 
@@ -77,7 +77,7 @@ library SmardexLibrary {
         uint256 _priceAverageOut,
         uint256 _currentTimestamp
     ) internal pure returns (uint256 newPriceAverageIn_, uint256 newPriceAverageOut_) {
-        require(_currentTimestamp >= _priceAverageLastTimestamp, "SmardexPair: INVALID_TIMESTAMP");
+        require(_currentTimestamp >= _priceAverageLastTimestamp, "MorodexPair: INVALID_TIMESTAMP");
 
         // very first time
         if (_priceAverageLastTimestamp == 0) {
@@ -340,10 +340,10 @@ library SmardexLibrary {
             uint256 newFictiveReserveOut_
         )
     {
-        require(_amountIn > 0, "SmarDexLibrary: INSUFFICIENT_INPUT_AMOUNT");
+        require(_amountIn > 0, "MoroDexLibrary: INSUFFICIENT_INPUT_AMOUNT");
         require(
             _reserveIn > 0 && _reserveOut > 0 && _fictiveReserveIn > 0 && _fictiveReserveOut > 0,
-            "SmarDexLibrary: INSUFFICIENT_LIQUIDITY"
+            "MoroDexLibrary: INSUFFICIENT_LIQUIDITY"
         );
 
         uint256 _amountInWithFees = (_amountIn * REVERSE_FEES_TOTAL) / FEES_BASE;
@@ -451,14 +451,14 @@ library SmardexLibrary {
             uint256 newFictiveReserveOut_
         )
     {
-        require(_amountOut > 0, "SmarDexLibrary: INSUFFICIENT_OUTPUT_AMOUNT");
+        require(_amountOut > 0, "MoroDexLibrary: INSUFFICIENT_OUTPUT_AMOUNT");
         require(
             _amountOut < _fictiveReserveOut &&
                 _reserveIn > 0 &&
                 _reserveOut > 0 &&
                 _fictiveReserveIn > 0 &&
                 _fictiveReserveOut > 0,
-            "SmarDexLibrary: INSUFFICIENT_LIQUIDITY"
+            "MoroDexLibrary: INSUFFICIENT_LIQUIDITY"
         );
 
         uint256 _firstAmountOut = computeFirstTradeQtyOut(

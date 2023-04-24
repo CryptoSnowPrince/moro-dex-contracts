@@ -2,16 +2,16 @@
 pragma solidity =0.8.17;
 
 // contracts
-import "./SmardexPair.sol";
+import "./MorodexPair.sol";
 
 // interfaces
-import "./interfaces/ISmardexFactory.sol";
+import "./interfaces/IMorodexFactory.sol";
 
 /**
- * @title SmardexFactory
- * @notice facilitates creation of SmardexPair to swap tokens.
+ * @title MorodexFactory
+ * @notice facilitates creation of MorodexPair to swap tokens.
  */
-contract SmardexFactory is ISmardexFactory {
+contract MorodexFactory is IMorodexFactory {
     address public feeTo;
     address public feeToSetter;
 
@@ -22,19 +22,19 @@ contract SmardexFactory is ISmardexFactory {
         feeToSetter = _feeToSetter;
     }
 
-    ///@inheritdoc ISmardexFactory
+    ///@inheritdoc IMorodexFactory
     function allPairsLength() external view returns (uint256) {
         return allPairs.length;
     }
 
-    ///@inheritdoc ISmardexFactory
+    ///@inheritdoc IMorodexFactory
     function createPair(address _tokenA, address _tokenB) external returns (address pair_) {
-        require(_tokenA != _tokenB, "SmarDex: IDENTICAL_ADDRESSES");
+        require(_tokenA != _tokenB, "MoroDex: IDENTICAL_ADDRESSES");
         (address _token0, address _token1) = _tokenA < _tokenB ? (_tokenA, _tokenB) : (_tokenB, _tokenA);
-        require(_token0 != address(0), "SmarDex: ZERO_ADDRESS");
-        require(getPair[_token0][_token1] == address(0), "SmarDex: PAIR_EXISTS"); // single check is sufficient
+        require(_token0 != address(0), "MoroDex: ZERO_ADDRESS");
+        require(getPair[_token0][_token1] == address(0), "MoroDex: PAIR_EXISTS"); // single check is sufficient
         bytes32 _salt = keccak256(abi.encodePacked(_token0, _token1));
-        SmardexPair pair = new SmardexPair{ salt: _salt }();
+        MorodexPair pair = new MorodexPair{ salt: _salt }();
         pair.initialize(_token0, _token1);
         pair_ = address(pair);
         getPair[_token0][_token1] = pair_;
@@ -43,15 +43,15 @@ contract SmardexFactory is ISmardexFactory {
         emit PairCreated(_token0, _token1, pair_, allPairs.length);
     }
 
-    ///@inheritdoc ISmardexFactory
+    ///@inheritdoc IMorodexFactory
     function setFeeTo(address _feeTo) external {
-        require(msg.sender == feeToSetter, "SmarDex: FORBIDDEN");
+        require(msg.sender == feeToSetter, "MoroDex: FORBIDDEN");
         feeTo = _feeTo;
     }
 
-    ///@inheritdoc ISmardexFactory
+    ///@inheritdoc IMorodexFactory
     function setFeeToSetter(address _feeToSetter) external {
-        require(msg.sender == feeToSetter, "SmarDex: FORBIDDEN");
+        require(msg.sender == feeToSetter, "MoroDex: FORBIDDEN");
         feeToSetter = _feeToSetter;
     }
 }

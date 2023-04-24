@@ -6,20 +6,20 @@ import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 
 // libraries
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "./libraries/SmardexLibrary.sol";
+import "./libraries/MorodexLibrary.sol";
 import "./libraries/TransferHelper.sol";
 
 // interfaces
-import "./interfaces/ISmardexPair.sol";
-import "./interfaces/ISmardexFactory.sol";
-import "./interfaces/ISmardexSwapCallback.sol";
-import "./interfaces/ISmardexMintCallback.sol";
+import "./interfaces/IMorodexPair.sol";
+import "./interfaces/IMorodexFactory.sol";
+import "./interfaces/IMorodexSwapCallback.sol";
+import "./interfaces/IMorodexMintCallback.sol";
 
 /**
- * @title SmardexPair
+ * @title MorodexPair
  * @notice Pair contract that allows user to swap 2 ERC20-strict tokens in a decentralised and automated way
  */
-contract SmardexPair is ISmardexPair, ERC20Permit {
+contract MorodexPair is IMorodexPair, ERC20Permit {
     using SafeCast for uint256;
     using SafeCast for int256;
 
@@ -56,7 +56,7 @@ contract SmardexPair is ISmardexPair, ERC20Permit {
     address public token0;
     address public token1;
 
-    // smardex new fictive reserves
+    // morodex new fictive reserves
     uint128 internal fictiveReserve0;
     uint128 internal fictiveReserve1; // accessible via getFictiveReserves()
 
@@ -73,42 +73,42 @@ contract SmardexPair is ISmardexPair, ERC20Permit {
     uint8 private lockStatus = CONTRACT_UNLOCKED;
 
     modifier lock() {
-        require(lockStatus == CONTRACT_UNLOCKED, "SmarDex: LOCKED");
+        require(lockStatus == CONTRACT_UNLOCKED, "MoroDex: LOCKED");
         lockStatus = CONTRACT_LOCKED;
         _;
         lockStatus = CONTRACT_UNLOCKED;
     }
 
-    constructor() ERC20("SmarDex LP-Token", "SDEX-LP") ERC20Permit("SmarDex LP-Token") {
+    constructor() ERC20("MoroDex LP-Token", "MDEX-LP") ERC20Permit("MoroDex LP-Token") {
         factory = msg.sender;
     }
 
-    ///@inheritdoc ISmardexPair
+    ///@inheritdoc IMorodexPair
     function initialize(address _token0, address _token1) external override {
-        require(msg.sender == factory, "SmarDex: FORBIDDEN"); // sufficient check
+        require(msg.sender == factory, "MoroDex: FORBIDDEN"); // sufficient check
         token0 = _token0;
         token1 = _token1;
     }
 
-    ///@inheritdoc ISmardexPair
+    ///@inheritdoc IMorodexPair
     function getReserves() external view override returns (uint256 reserve0_, uint256 reserve1_) {
         reserve0_ = IERC20(token0).balanceOf(address(this)) - feeToAmount0;
         reserve1_ = IERC20(token1).balanceOf(address(this)) - feeToAmount1;
     }
 
-    ///@inheritdoc ISmardexPair
+    ///@inheritdoc IMorodexPair
     function getFictiveReserves() external view override returns (uint256 fictiveReserve0_, uint256 fictiveReserve1_) {
         fictiveReserve0_ = fictiveReserve0;
         fictiveReserve1_ = fictiveReserve1;
     }
 
-    ///@inheritdoc ISmardexPair
+    ///@inheritdoc IMorodexPair
     function getFees() external view override returns (uint256 fees0_, uint256 fees1_) {
         fees0_ = feeToAmount0;
         fees1_ = feeToAmount1;
     }
 
-    ///@inheritdoc ISmardexPair
+    ///@inheritdoc IMorodexPair
     function getPriceAverage()
         external
         view
@@ -119,7 +119,7 @@ contract SmardexPair is ISmardexPair, ERC20Permit {
         priceAverageLastTimestamp_ = priceAverageLastTimestamp;
     }
 
-    ///@inheritdoc ISmardexPair
+    ///@inheritdoc IMorodexPair
     function getUpdatedPriceAverage(
         uint256 _fictiveReserveIn,
         uint256 _fictiveReserveOut,
@@ -128,7 +128,7 @@ contract SmardexPair is ISmardexPair, ERC20Permit {
         uint256 _priceAverageOut,
         uint256 _currentTimestamp
     ) public pure returns (uint256 priceAverageIn_, uint256 priceAverageOut_) {
-        (priceAverageIn_, priceAverageOut_) = SmardexLibrary.getUpdatedPriceAverage(
+        (priceAverageIn_, priceAverageOut_) = MorodexLibrary.getUpdatedPriceAverage(
             _fictiveReserveIn,
             _fictiveReserveOut,
             _priceAverageLastTimestamp,
@@ -138,7 +138,7 @@ contract SmardexPair is ISmardexPair, ERC20Permit {
         );
     }
 
-    ///@inheritdoc ISmardexPair
+    ///@inheritdoc IMorodexPair
     function mint(
         address _to,
         uint256 _amount0,
@@ -151,7 +151,7 @@ contract SmardexPair is ISmardexPair, ERC20Permit {
         _feeToSwap();
     }
 
-    ///@inheritdoc ISmardexPair
+    ///@inheritdoc IMorodexPair
     function burn(address _to) external override returns (uint256 amount0_, uint256 amount1_) {
         (amount0_, amount1_) = _burnBeforeFee(_to);
 
@@ -159,14 +159,14 @@ contract SmardexPair is ISmardexPair, ERC20Permit {
         _feeToSwap();
     }
 
-    ///@inheritdoc ISmardexPair
+    ///@inheritdoc IMorodexPair
     function swap(
         address _to,
         bool _zeroForOne,
         int256 _amountSpecified,
         bytes calldata _data
     ) external override lock returns (int256 amount0_, int256 amount1_) {
-        require(_amountSpecified != 0, "SmarDex: ZERO_AMOUNT");
+        require(_amountSpecified != 0, "MoroDex: ZERO_AMOUNT");
 
         SwapParams memory _params = SwapParams({
             amountCalculated: 0,
@@ -206,7 +206,7 @@ contract SmardexPair is ISmardexPair, ERC20Permit {
             );
 
         // compute new price average
-        (_params.priceAverageIn, _params.priceAverageOut) = SmardexLibrary.getUpdatedPriceAverage(
+        (_params.priceAverageIn, _params.priceAverageOut) = MorodexLibrary.getUpdatedPriceAverage(
             _params.fictiveReserveIn,
             _params.fictiveReserveOut,
             priceAverageLastTimestamp,
@@ -222,7 +222,7 @@ contract SmardexPair is ISmardexPair, ERC20Permit {
 
         if (_amountSpecified > 0) {
             uint256 _temp;
-            (_temp, , , _params.fictiveReserveIn, _params.fictiveReserveOut) = SmardexLibrary.getAmountOut(
+            (_temp, , , _params.fictiveReserveIn, _params.fictiveReserveOut) = MorodexLibrary.getAmountOut(
                 _amountSpecified.toUint256(),
                 _params.balanceIn,
                 _params.balanceOut,
@@ -234,7 +234,7 @@ contract SmardexPair is ISmardexPair, ERC20Permit {
             _params.amountCalculated = _temp.toInt256();
         } else {
             uint256 _temp;
-            (_temp, , , _params.fictiveReserveIn, _params.fictiveReserveOut) = SmardexLibrary.getAmountIn(
+            (_temp, , , _params.fictiveReserveIn, _params.fictiveReserveOut) = MorodexLibrary.getAmountIn(
                 (-_amountSpecified).toUint256(),
                 _params.balanceIn,
                 _params.balanceOut,
@@ -258,38 +258,38 @@ contract SmardexPair is ISmardexPair, ERC20Permit {
                     : (_amountSpecified, _params.amountCalculated)
             );
 
-        require(_to != _params.token0 && _to != _params.token1, "SmarDex: INVALID_TO");
+        require(_to != _params.token0 && _to != _params.token1, "MoroDex: INVALID_TO");
         if (_zeroForOne) {
             if (amount1_ < 0) {
                 TransferHelper.safeTransfer(_params.token1, _to, uint256(-amount1_));
             }
-            ISmardexSwapCallback(msg.sender).smardexSwapCallback(amount0_, amount1_, _data);
+            IMorodexSwapCallback(msg.sender).morodexSwapCallback(amount0_, amount1_, _data);
             uint256 _balanceInBefore = _params.balanceIn;
             _params.balanceIn = IERC20(token0).balanceOf(address(this));
             require(
                 _balanceInBefore + feeToAmount0 + (amount0_).toUint256() <= _params.balanceIn,
-                "SmarDex: INSUFFICIENT_TOKEN0_INPUT_AMOUNT"
+                "MoroDex: INSUFFICIENT_TOKEN0_INPUT_AMOUNT"
             );
             _params.balanceOut = IERC20(token1).balanceOf(address(this));
         } else {
             if (amount0_ < 0) {
                 TransferHelper.safeTransfer(_params.token0, _to, uint256(-amount0_));
             }
-            ISmardexSwapCallback(msg.sender).smardexSwapCallback(amount0_, amount1_, _data);
+            IMorodexSwapCallback(msg.sender).morodexSwapCallback(amount0_, amount1_, _data);
             uint256 _balanceInBefore = _params.balanceIn;
             _params.balanceIn = IERC20(token1).balanceOf(address(this));
             require(
                 _balanceInBefore + feeToAmount1 + (amount1_).toUint256() <= _params.balanceIn,
-                "SmarDex: INSUFFICIENT_TOKEN1_INPUT_AMOUNT"
+                "MoroDex: INSUFFICIENT_TOKEN1_INPUT_AMOUNT"
             );
             _params.balanceOut = IERC20(token0).balanceOf(address(this));
         }
 
         // update feeTopart
-        bool _feeOn = ISmardexFactory(factory).feeTo() != address(0);
+        bool _feeOn = IMorodexFactory(factory).feeTo() != address(0);
         if (_zeroForOne) {
             if (_feeOn) {
-                feeToAmount0 += ((uint256(amount0_) * SmardexLibrary.FEES_POOL) / SmardexLibrary.FEES_BASE).toUint104();
+                feeToAmount0 += ((uint256(amount0_) * MorodexLibrary.FEES_POOL) / MorodexLibrary.FEES_BASE).toUint104();
             }
             _update(
                 _params.balanceIn,
@@ -301,7 +301,7 @@ contract SmardexPair is ISmardexPair, ERC20Permit {
             );
         } else {
             if (_feeOn) {
-                feeToAmount1 += ((uint256(amount1_) * SmardexLibrary.FEES_POOL) / SmardexLibrary.FEES_BASE).toUint104();
+                feeToAmount1 += ((uint256(amount1_) * MorodexLibrary.FEES_POOL) / MorodexLibrary.FEES_BASE).toUint104();
             }
             _update(
                 _params.balanceOut,
@@ -333,8 +333,8 @@ contract SmardexPair is ISmardexPair, ERC20Permit {
         uint256 _priceAverage0,
         uint256 _priceAverage1
     ) private {
-        require(_fictiveReserve0 > 0 && _fictiveReserve1 > 0, "SmarDex: FICTIVE_RESERVES_TOO_LOW");
-        require(_fictiveReserve0 <= type(uint128).max && _fictiveReserve1 <= type(uint128).max, "SmarDex: OVERFLOW");
+        require(_fictiveReserve0 > 0 && _fictiveReserve1 > 0, "MoroDex: FICTIVE_RESERVES_TOO_LOW");
+        require(_fictiveReserve0 <= type(uint128).max && _fictiveReserve1 <= type(uint128).max, "MoroDex: OVERFLOW");
         fictiveReserve0 = uint128(_fictiveReserve0);
         fictiveReserve1 = uint128(_fictiveReserve1);
 
@@ -353,7 +353,7 @@ contract SmardexPair is ISmardexPair, ERC20Permit {
      * @return feeOn_ if part of the fees goes to feeTo
      */
     function _mintFee() private returns (bool feeOn_) {
-        address _feeTo = ISmardexFactory(factory).feeTo();
+        address _feeTo = IMorodexFactory(factory).feeTo();
         feeOn_ = _feeTo != address(0);
         if (feeOn_) {
             // gas saving
@@ -398,8 +398,8 @@ contract SmardexPair is ISmardexPair, ERC20Permit {
         uint256 _balance1 = IERC20(token1).balanceOf(address(this));
         uint256 _totalSupply = totalSupply();
 
-        ISmardexMintCallback(msg.sender).smardexMintCallback(
-            ISmardexMintCallback.MintCallbackData({
+        IMorodexMintCallback(msg.sender).morodexMintCallback(
+            IMorodexMintCallback.MintCallbackData({
                 token0: token0,
                 token1: token1,
                 amount0: _amount0,
@@ -412,8 +412,8 @@ contract SmardexPair is ISmardexPair, ERC20Permit {
         uint256 _balance0after = IERC20(token0).balanceOf(address(this));
         uint256 _balance1after = IERC20(token1).balanceOf(address(this));
 
-        require(_balance0after >= _balance0 + _amount0, "SmarDex: INSUFFICIENT_AMOUNT_0");
-        require(_balance1after >= _balance1 + _amount1, "SmarDex: INSUFFICIENT_AMOUNT_1");
+        require(_balance0after >= _balance0 + _amount0, "MoroDex: INSUFFICIENT_AMOUNT_0");
+        require(_balance1after >= _balance1 + _amount1, "MoroDex: INSUFFICIENT_AMOUNT_1");
 
         if (_totalSupply == 0) {
             liquidity_ = Math.sqrt(_amount0 * _amount1) - MINIMUM_LIQUIDITY;
@@ -428,7 +428,7 @@ contract SmardexPair is ISmardexPair, ERC20Permit {
             _fictiveReserve1 = (fictiveReserve1 * (_totalSupply + liquidity_)) / _totalSupply;
         }
 
-        require(liquidity_ > 0, "SmarDex: INSUFFICIENT_LIQUIDITY_MINTED");
+        require(liquidity_ > 0, "MoroDex: INSUFFICIENT_LIQUIDITY_MINTED");
         _mint(_to, liquidity_);
 
         _update(_balance0after, _balance1after, _fictiveReserve0, _fictiveReserve1, priceAverage0, priceAverage1);
@@ -457,7 +457,7 @@ contract SmardexPair is ISmardexPair, ERC20Permit {
         // pro-rata distribution
         amount0_ = (_liquidity * _balance0) / _totalSupply;
         amount1_ = (_liquidity * _balance1) / _totalSupply;
-        require(amount0_ > 0 && amount1_ > 0, "SmarDex: INSUFFICIENT_LIQUIDITY_BURNED");
+        require(amount0_ > 0 && amount1_ > 0, "MoroDex: INSUFFICIENT_LIQUIDITY_BURNED");
 
         // update proportionally the fictiveReserves
         uint256 _fictiveReserve0 = fictiveReserve0;
@@ -481,7 +481,7 @@ contract SmardexPair is ISmardexPair, ERC20Permit {
      * @notice execute function "executeWork(address,address)" of the feeTo contract. Doesn't revert tx if it reverts
      */
     function _feeToSwap() internal {
-        address _feeTo = ISmardexFactory(factory).feeTo();
+        address _feeTo = IMorodexFactory(factory).feeTo();
 
         // call contract destination for handling fees
         // We don't handle return values so it does not revert for LP if something went wrong in feeTo

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity >=0.8.17;
 
-interface ISmardexMintCallback {
+interface IMorodexMintCallback {
     /**
      * @notice callback data for mint
      * @param token0 address of the first token of the pair
@@ -19,8 +19,8 @@ interface ISmardexMintCallback {
     }
 
     /**
-     * @notice callback to implement when calling SmardexPair.mint
+     * @notice callback to implement when calling MorodexPair.mint
      * @param _data callback data for mint
      */
-    function smardexMintCallback(MintCallbackData calldata _data) external;
+    function morodexMintCallback(MintCallbackData calldata _data) external;
 }

@@ -2,10 +2,10 @@
 pragma solidity >=0.8.17;
 
 // interfaces
-import "../../core/interfaces/ISmardexSwapCallback.sol";
-import "../../core/interfaces/ISmardexMintCallback.sol";
+import "../../core/interfaces/IMorodexSwapCallback.sol";
+import "../../core/interfaces/IMorodexMintCallback.sol";
 
-interface ISmardexRouter is ISmardexSwapCallback, ISmardexMintCallback {
+interface IMorodexRouter is IMorodexSwapCallback, IMorodexMintCallback {
     /**
      * @notice get the factory address
      * @return address of the factory

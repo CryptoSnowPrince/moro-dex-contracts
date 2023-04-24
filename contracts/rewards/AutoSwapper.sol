@@ -4,16 +4,16 @@ pragma solidity 0.8.17;
 // libraries
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "../core/libraries/SmardexLibrary.sol";
+import "../core/libraries/MorodexLibrary.sol";
 import "../periphery/libraries/Path.sol";
 
 // interfaces
-import "../core/interfaces/ISmardexPair.sol";
+import "../core/interfaces/IMorodexPair.sol";
 import "./interfaces/IAutoSwapper.sol";
 
 /**
  * @title AutoSwapper
- * @notice AutoSwapper makes it automatic and/or public to get fees from Smardex and convert it to tokens for staking
+ * @notice AutoSwapper makes it automatic and/or public to get fees from Morodex and convert it to tokens for staking
  */
 contract AutoSwapper is IAutoSwapper {
     using SafeERC20 for IERC20;
@@ -22,7 +22,7 @@ contract AutoSwapper is IAutoSwapper {
     using Path for bytes;
 
     /**
-     * @notice callback data for swap from SmardexRouter
+     * @notice callback data for swap from MorodexRouter
      * @param path path of the swap, array of token addresses tightly packed
      * @param payer address of the payer for the swap
      */
@@ -47,7 +47,7 @@ contract AutoSwapper is IAutoSwapper {
     struct SwapCallParams {
         bool zeroForOne;
         uint256 balanceIn;
-        ISmardexPair pair;
+        IMorodexPair pair;
         uint256 fictiveReserve0;
         uint256 fictiveReserve1;
         uint256 oldPriceAv0;
@@ -61,16 +61,16 @@ contract AutoSwapper is IAutoSwapper {
     uint256 private constant AUTOSWAP_SLIPPAGE = 2; // 2%
     uint256 private constant AUTOSWAP_SLIPPAGE_BASE = 100;
 
-    ISmardexFactory public immutable factory;
+    IMorodexFactory public immutable factory;
     address public immutable stakingAddress;
-    IERC20 public immutable smardexToken;
+    IERC20 public immutable morodexToken;
 
-    ISmardexPair private constant DEFAULT_CACHED_PAIR = ISmardexPair(address(0));
-    ISmardexPair private cachedPair = DEFAULT_CACHED_PAIR;
+    IMorodexPair private constant DEFAULT_CACHED_PAIR = IMorodexPair(address(0));
+    IMorodexPair private cachedPair = DEFAULT_CACHED_PAIR;
 
-    constructor(ISmardexFactory _factory, IERC20 _smardexToken, address _stakingAddress) {
+    constructor(IMorodexFactory _factory, IERC20 _morodexToken, address _stakingAddress) {
         factory = _factory;
-        smardexToken = _smardexToken;
+        morodexToken = _morodexToken;
         stakingAddress = _stakingAddress;
     }
 
@@ -83,21 +83,21 @@ contract AutoSwapper is IAutoSwapper {
 
     /// @inheritdoc IAutoSwapper
     function transferTokens() public {
-        uint256 _balance = smardexToken.balanceOf(address(this));
+        uint256 _balance = morodexToken.balanceOf(address(this));
         if (_balance == 0) return;
-        smardexToken.safeTransfer(stakingAddress, _balance);
+        morodexToken.safeTransfer(stakingAddress, _balance);
     }
 
     /**
-     * @notice private function to swap token in SDEX and send it to the staking address
-     * @param _token address of the token to swap into sdex
+     * @notice private function to swap token in MDEX and send it to the staking address
+     * @param _token address of the token to swap into mdex
      */
     function _swapAndSend(IERC20 _token) private {
-        if (_token == smardexToken) return;
+        if (_token == morodexToken) return;
         SwapCallParams memory _params = SwapCallParams({
-            zeroForOne: _token < smardexToken,
+            zeroForOne: _token < morodexToken,
             balanceIn: _token.balanceOf(address(this)),
-            pair: ISmardexPair(factory.getPair(address(_token), address(smardexToken))),
+            pair: IMorodexPair(factory.getPair(address(_token), address(morodexToken))),
             fictiveReserve0: 0,
             fictiveReserve1: 0,
             oldPriceAv0: 0,
@@ -119,7 +119,7 @@ contract AutoSwapper is IAutoSwapper {
         }
 
         if (_params.zeroForOne) {
-            (_params.newPriceAvIn, _params.newPriceAvOut) = SmardexLibrary.getUpdatedPriceAverage(
+            (_params.newPriceAvIn, _params.newPriceAvOut) = MorodexLibrary.getUpdatedPriceAverage(
                 _params.fictiveReserve0,
                 _params.fictiveReserve1,
                 _params.oldPriceAvTimestamp,
@@ -128,7 +128,7 @@ contract AutoSwapper is IAutoSwapper {
                 block.timestamp
             );
         } else {
-            (_params.newPriceAvIn, _params.newPriceAvOut) = SmardexLibrary.getUpdatedPriceAverage(
+            (_params.newPriceAvIn, _params.newPriceAvOut) = MorodexLibrary.getUpdatedPriceAverage(
                 _params.fictiveReserve1,
                 _params.fictiveReserve0,
                 _params.oldPriceAvTimestamp,
@@ -151,10 +151,10 @@ contract AutoSwapper is IAutoSwapper {
             abi.encodeWithSelector(
                 SWAP_SELECTOR,
                 stakingAddress,
-                _token < smardexToken,
+                _token < morodexToken,
                 _params.balanceIn.toInt256(),
                 abi.encode(
-                    SwapCallbackData({ path: abi.encodePacked(_token, smardexToken), payer: address(this) }),
+                    SwapCallbackData({ path: abi.encodePacked(_token, morodexToken), payer: address(this) }),
                     _amountOutWithSlippage
                 )
             )
@@ -163,19 +163,19 @@ contract AutoSwapper is IAutoSwapper {
         cachedPair = DEFAULT_CACHED_PAIR;
     }
 
-    /// @inheritdoc ISmardexSwapCallback
-    function smardexSwapCallback(int256 _amount0Delta, int256 _amount1Delta, bytes calldata _dataFromPair) external {
-        require(_amount0Delta > 0 || _amount1Delta > 0, "SmardexRouter: Callback Invalid amount");
+    /// @inheritdoc IMorodexSwapCallback
+    function morodexSwapCallback(int256 _amount0Delta, int256 _amount1Delta, bytes calldata _dataFromPair) external {
+        require(_amount0Delta > 0 || _amount1Delta > 0, "MorodexRouter: Callback Invalid amount");
         (SwapCallbackData memory _data, uint256 _amountOutWithSlippage) = abi.decode(
             _dataFromPair,
             (SwapCallbackData, uint256)
         );
         (address _tokenIn, ) = _data.path.decodeFirstPool();
-        require(msg.sender == address(cachedPair), "SmarDexRouter: INVALID_PAIR"); // ensure that msg.sender is a pair
+        require(msg.sender == address(cachedPair), "MoroDexRouter: INVALID_PAIR"); // ensure that msg.sender is a pair
         // ensure that the trade gives at least the minimum amount of output token (negative delta)
         require(
             (_amount0Delta < 0 ? uint256(-_amount0Delta) : (-_amount1Delta).toUint256()) >= _amountOutWithSlippage,
-            "SmardexAutoSwapper: Invalid price"
+            "MorodexAutoSwapper: Invalid price"
         );
         // send positive delta to pair
         IERC20(_tokenIn).safeTransfer(
