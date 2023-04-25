@@ -19,9 +19,9 @@ MorodexRouter: 0x6583bEE82975A1a7d1a13CDD777238401f8E1A0A
 ```text
 MoroDex: 
 
-MorodexFactory: 
+MorodexFactory: 0xde00bDedf6260954728B9489521A44cE95aE311C
     FEETOSETTER: 0xa8b3ee1b617dfe88db8819235d9a4c33c0cb3416
-    pairCodeHash: 
+    pairCodeHash: 0x427820f50f31cb4db05f9649f9252b9355ad7e4bfc4bd51398898cee807db464
    
 MorodexRouter: 
     FACTORY: 
