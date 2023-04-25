@@ -61,10 +61,8 @@ contract AutoSwapper is IAutoSwapper {
     uint256 private constant AUTOSWAP_SLIPPAGE = 2; // 2%
     uint256 private constant AUTOSWAP_SLIPPAGE_BASE = 100;
 
-    address public stakingAddressSetter;
-    address public stakingAddress;
-
     IMorodexFactory public immutable factory;
+    address public immutable stakingAddress;
     IERC20 public immutable morodexToken;
 
     IMorodexPair private constant DEFAULT_CACHED_PAIR = IMorodexPair(address(0));
@@ -184,15 +182,5 @@ contract AutoSwapper is IAutoSwapper {
             msg.sender,
             _amount0Delta > 0 ? uint256(_amount0Delta) : _amount1Delta.toUint256()
         );
-    }
-
-    function setStakingAddress(address _stakingAddress) external {
-        require(msg.sender == stakingAddressSetter, "AutoSwapper: FORBIDDEN");
-        stakingAddress = _stakingAddress;
-    }
-
-    function setStakingAddressSetter(address _stakingAddressSetter) external {
-        require(msg.sender == stakingAddressSetter, "AutoSwapper: FORBIDDEN");
-        stakingAddressSetter = _stakingAddressSetter;
     }
 }

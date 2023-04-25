@@ -12,6 +12,8 @@ import "./interfaces/IMorodexFactory.sol";
  * @notice facilitates creation of MorodexPair to swap tokens.
  */
 contract MorodexFactory is IMorodexFactory {
+    bytes32 public constant INIT_CODE_PAIR_HASH = keccak256(abi.encodePacked(type(MorodexPair).creationCode));
+
     address public feeTo;
     address public feeToSetter;
 
